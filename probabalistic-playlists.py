@@ -2,9 +2,16 @@ import os
 import random
 import queue
 
+# prev_playlists and next_playlists are dicts of spotify URLs and weights attached to the graphs
+class Playlist:
+    def __init__(self, songs={}, prev_playlists={}, next_playlists={}):
+        self.songs = songs
+        self.prev_playlists = prev_playlists
+        self.next_playlists = next_playlists
+
+# next_songs is a dict with keys as titles and values as song objects
+# special case: a song with an empty URL can be used as a probability branching node
 class Song:
-    # next_songs is a dict with keys as titles and values as song objects
-    # special case: a song with an empty URL can be used as a probability branching node
     def __init__(self, url=None, next_songs={}):
         self.url = url
         self.next_songs = next_songs
@@ -19,7 +26,7 @@ class Playhead:
     def play(self):
         # if the playhead is on an empty node, check for non-empty nodes then go to it
         # note: may loop forever (see: halting problem)
-        if playlist[self.head].url is None:
+        if get_curr_song().url is None:
             self.next()  # recursion until suitable song found
         # only put non-empty node in history; the history is a linear collapse of nonlinear exploration
         self.history.put(self.head)
@@ -48,7 +55,7 @@ class Playhead:
         self.play()
 
     def pick_next_song(self):
-        next_songs = playlist[self.head].next_songs
+        next_songs = get_curr_song().next_songs
         curr_bucket = 0
         rand_choice = random.uniform(0, 1)
         print(f"Choosing what to play from the following probabilities: {next_songs}")
@@ -76,29 +83,37 @@ music_path = 'C:\\Users\\Cody-DellXPS\\My Drive\\Music\\'
 song1_path = music_path + 'Father Stretch My Hands.mp3'
 song2_path = music_path + 'Get Free.mp3'
 song3_path = music_path + 'In For the Kill (Skrillex Remix).mp3'
-# the playlist is a multi-dim dict of song objects
-playlist = {
+
+songs_to_play = {
     "Father Stretch My Hands": Song(song1_path, {"Get Free": 0.5, "In For the Kill": 0.5}),
     "Get Free": Song(song2_path, {"In For the Kill": 0.5, "Father Stretch My Hands": 0.5}),
     "In For the Kill": Song(song3_path, {"In For the Kill": 1})
 }
 
+playlist = Playlist(songs=songs_to_play)
 # start playing here
 playhead = Playhead("Father Stretch My Hands")
 
-# plays the sound file with default program
-def play_song(song_key):
-    song_obj = playlist[song_key]
+# plays the sound file the playhead is on, with default program
+def play_song():
+    song_obj = get_curr_song()
     url = song_obj.url
     print(f"Now playing from {url}")
     os.startfile(url)
 
+# TODO
 def add_song(title, url=None, next_songs={}, prev_songs={}):
     # make file paths a little bit easier
     if(url is not None):
         url = music_path + url
     new_song = Song(url, next_songs)
     playlist["title": new_song]
+
+def get_curr_song():
+    return playlist.songs[playhead.head]
+
+# def get_song_from_title(title):
+#     return playlist.songs[title]
 
     # update previous songs to connect to this song
     # TODO
