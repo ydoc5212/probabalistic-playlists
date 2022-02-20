@@ -103,9 +103,9 @@ song2_path = music_path + 'Get Free.mp3'
 song3_path = music_path + 'In For the Kill (Skrillex Remix).mp3'
 
 playlist_songs = {
-    "Father Stretch My Hands": Song(song1_path, {"Get Free": 0.5, "In For the Kill": 0.5}),
-    "Get Free": Song(song2_path, {"In For the Kill": 0.5, "Father Stretch My Hands": 0.5}),
-    "In For the Kill": Song(song3_path, {"In For the Kill": 1})
+    "Father Stretch My Hands": Song(song1_path, {"Get Free": 0.5, "In For the Kill": 0.5}, "Annotation: I was listening to this song when I found out I got into Stanford."),
+    "Get Free": Song(song2_path, {"In For the Kill": 0.5, "Father Stretch My Hands": 0.5}, "Annotation: Here there is a 50% chance of playing either In For the Kill or Father Stretch My Hands."),
+    "In For the Kill": Song(song3_path, {"In For the Kill": 1}, "Annotation: I've looped In for the Kill; there is a 100% chance it will play next!")
 }
 
 playlist = Playlist(songs=playlist_songs)
